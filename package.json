@@ -1,6 +1,6 @@
 {
   "name": "stardrop",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "STAR DROP - 드롭 머지 퍼즐 게임",
   "scripts": {
@@ -10,6 +10,7 @@
     "ios": "npx cap open ios"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^8.3.0",
     "@capacitor/android": "^8.6.0",
     "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.0",
@@ -17,7 +18,8 @@
     "@capacitor/ios": "^8.6.0",
     "@capacitor/share": "^8.0.3",
     "@capacitor/splash-screen": "^8.0.2",
-    "@capacitor/status-bar": "^8.0.4"
+    "@capacitor/status-bar": "^8.0.4",
+    "gameanalytics": "^5.0.0"
   },
   "devDependencies": {
     "@capacitor/assets": "^4.0.0",

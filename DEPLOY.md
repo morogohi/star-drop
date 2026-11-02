@@ -102,7 +102,7 @@ cd android && ./gradlew bundleRelease
 ### 3-4. Play Console 등록 순서
 1. https://play.google.com/console → **앱 만들기**: 이름 `스타 드롭 - 별 합치기 퍼즐`, 게임, 무료
 2. **앱 콘텐츠** 작성 — 답변은 `store/listing.md`에 정리돼 있습니다
-   - 개인정보처리방침 URL (4-5 참고) · 광고 포함 여부: **아니요** · 데이터 보안: **수집 없음**
+   - 개인정보처리방침 URL (4-5 참고) · 광고 포함 여부: **예** · 데이터 보안: listing.md v1.1 응답 참고
    - 콘텐츠 등급 설문 → 전체이용가 · 타겟층: 13세 이상 권장 (아동 대상 선택 시 가족 정책 심사가 추가됨)
 3. **스토어 등록정보**: `store/listing.md` 문구 + `store/icon-1024.png`(512×512로 축소) + `feature-graphic-1024x500.png` + `screens/android-phone/*.png`
 4. **테스트 → 비공개 테스트** 트랙에 `app-release.aab` 업로드 → 테스터 12명 이상 초대 → **14일 유지**
@@ -144,7 +144,7 @@ App Store Connect → **사용자 및 액세스 → 통합 → App Store Connect
 - 스크린샷: `store/screens/ios-6.9/*.png` (1320×2868, 6.9" — 이것만 올리면 작은 화면용은 자동 축소)
 - 이 앱은 **iPhone 전용**으로 설정되어 있어 iPad 스크린샷은 필요 없습니다
 - 부제·키워드·설명: `store/listing.md`
-- **앱 개인정보 보호**: "데이터를 수집하지 않음"
+- **앱 개인정보 보호**: listing.md의 v1.1 응답대로 (AdMob·GameAnalytics)
 - 연령 등급 설문: 전부 "없음" → **4+**
 - 수출 규정(암호화): Info.plist에 `ITSAppUsesNonExemptEncryption = NO`가 들어 있어 묻지 않습니다
 - 가격: 무료 / 배포 국가: 대한민국 + 원하는 국가

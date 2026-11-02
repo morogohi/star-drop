@@ -10,7 +10,7 @@
 | 가격 | 무료 |
 | 연령 등급 | 4+ (Apple) / 전체이용가 (Google·GRAC 자체등급) |
 | 지원 기기 | iPhone (iOS 15+), Android 7.0+ (API 24) |
-| 개인정보 수집 | 없음 (Data Not Collected) |
+| 개인정보 수집 | 있음 — AdMob(광고 ID·기기정보), GameAnalytics(이용 데이터). 아래 응답 참고 |
 | 암호화 사용 | 없음 (ITSAppUsesNonExemptEncryption = NO 설정됨) |
 
 ## 부제 / 짧은 설명
@@ -64,14 +64,20 @@ Faster than 2048, easier than Tetris. Start dropping stars now! 🌠
 스타 드롭 첫 출시! 무한 모드와 오늘의 챌린지를 즐겨보세요.
 ```
 
-## App Store 앱 개인정보 보호 (App Privacy) 응답
-- "Do you or your third-party partners collect data from this app?" → **No, we do not collect data**
-- 광고 SDK(AdMob 등)를 나중에 넣으면 이 항목을 반드시 다시 작성해야 합니다.
+## App Store 앱 개인정보 보호 (App Privacy) 응답 — v1.1 (AdMob + GameAnalytics)
+- 데이터 수집: **예**
+- **Identifiers › Device ID** — 제3자 광고, 분석 / 사용자와 연결 안 됨 / 추적에 사용: ATT 요청 시 예, 미요청 시 아니요
+- **Usage Data › Product Interaction, Advertising Data** — 제3자 광고, 분석 / 연결 안 됨
+- **Diagnostics › Other Diagnostic Data** — 분석 / 연결 안 됨
+- **Location › Coarse Location** (IP 기반, AdMob) — 제3자 광고 / 연결 안 됨
 
-## Google Play 데이터 보안(Data safety) 응답
-- 데이터 수집: **아니요** / 데이터 공유: **아니요**
-- 전송 중 암호화: 해당 없음 (네트워크 통신 없음)
-- 계정 삭제 요청: 해당 없음 (계정 없음)
+## Google Play 데이터 보안(Data safety) 응답 — v1.1
+- 데이터 수집: **예** / 공유: **예** (광고 SDK)
+- 기기 또는 기타 ID: 수집·공유 (광고, 분석)
+- 앱 활동(앱 상호작용): 수집 (분석)
+- 대략적 위치: 수집·공유 (광고)
+- 전송 중 암호화: **예** / 삭제 요청: 계정 없음(앱 삭제로 로컬 데이터 삭제)
+- **광고 포함: 예** (앱 콘텐츠 › 광고)
 
 ## Google Play 콘텐츠 등급 설문 (IARC)
 - 카테고리: 게임 → 폭력/공포/성적 내용/도박/사용자 간 상호작용/구매 모두 **아니요** → 예상 등급: 전체이용가 / PEGI 3 / ESRB Everyone
