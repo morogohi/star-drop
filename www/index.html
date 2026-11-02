@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>스타 드롭</title>
+<style>
+:root{--bg1:#0b1026;--bg2:#1b1450;--ink:#eef0ff;--sub:#9aa3d6;--cell:56px;--gap:6px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;background:radial-gradient(120% 80% at 50% 0%,var(--bg2),var(--bg1));color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif;overflow:hidden;touch-action:manipulation}
+#stars{position:fixed;inset:0;pointer-events:none}
+.app{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;padding:calc(12px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom))}
+header{width:100%;max-width:420px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:900;font-size:20px;letter-spacing:-.5px}
+.logo span{background:linear-gradient(90deg,#ffd76a,#ff7ad9);-webkit-background-clip:text;background-clip:text;color:transparent}
+.modes{display:flex;background:#ffffff14;border-radius:999px;padding:3px}
+.modes button{border:0;background:none;color:var(--sub);font:600 12px inherit;font-family:inherit;padding:6px 10px;border-radius:999px}
+.modes button.on{background:#ffffff26;color:var(--ink)}
+.stats{width:100%;max-width:420px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0 8px}
+.stat{background:#ffffff10;border-radius:14px;padding:8px 10px}
+.stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--sub);font-size:11px}
+.bar{width:100%;max-width:420px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.next{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:12px}
+.next .tile{position:static;width:44px;height:44px;font-size:16px}
+.next .tile.sm{width:30px;height:30px;font-size:11px;opacity:.7}
+.tools{display:flex;gap:8px}
+.tool{border:0;border-radius:12px;background:#ffffff18;color:var(--ink);font:700 13px inherit;font-family:inherit;padding:9px 12px;display:flex;gap:6px;align-items:center}
+.tool.armed{background:#ff7ad9;color:#200}
+.tool:disabled{opacity:.35}
+.boardwrap{position:relative}
+.board{position:relative;display:grid;gap:var(--gap);padding:var(--gap);background:#ffffff0d;border:1px solid #ffffff1a;border-radius:18px}
+.col{display:grid;gap:var(--gap);border-radius:12px;transition:background .15s;cursor:pointer}
+.col:active,.col.hover{background:#ffffff12}
+.slot{width:var(--cell);height:var(--cell);border-radius:12px;background:#ffffff08;position:relative}
+.tile{position:absolute;inset:0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:calc(var(--cell)*.36);color:#fff;text-shadow:0 1px 2px #0005;box-shadow:inset 0 -4px 0 #0003,0 4px 12px #0004}
+.tile.drop{animation:drop .22s cubic-bezier(.3,1.4,.6,1)}
+.tile.pop{animation:pop .28s ease-out}
+.tile.fall{animation:fall .16s ease-in}
+.tile.target{outline:3px solid #ff7ad9;outline-offset:2px;animation:wob .5s infinite}
+@keyframes drop{from{transform:translateY(calc(var(--fall)*-1))}to{transform:none}}
+@keyframes fall{from{transform:translateY(calc(var(--cell)*-1))}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes wob{50%{transform:rotate(3deg)}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.shake{animation:shake .2s 2}
+.combo{position:absolute;left:50%;top:40%;white-space:nowrap;transform:translate(-50%,-50%);font-size:40px;font-weight:900;pointer-events:none;opacity:0;background:linear-gradient(90deg,#ffd76a,#ff7ad9);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 10px #0008)}
+.combo.show{animation:comboa .8s ease-out}
+@keyframes comboa{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-90%) scale(1)}}
+.float{position:absolute;font-weight:900;font-size:16px;color:#ffd76a;pointer-events:none;animation:fl .7s ease-out forwards;z-index:5}
+@keyframes fl{to{transform:translateY(-36px);opacity:0}}
+.overlay{position:fixed;inset:0;background:#05081cd9;display:none;align-items:center;justify-content:center;z-index:20;padding:20px;backdrop-filter:blur(6px)}
+.overlay.on{display:flex}
+.card{background:linear-gradient(160deg,#25206a,#121638);border:1px solid #ffffff22;border-radius:22px;padding:24px;max-width:340px;width:100%;text-align:center}
+.card h2{margin:0 0 6px;font-size:24px}
+.card p{color:var(--sub);margin:6px 0 16px;font-size:14px;line-height:1.5}
+.big{font-size:44px;font-weight:900;margin:4px 0}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.btn{border:0;border-radius:14px;padding:13px 18px;font:800 15px inherit;font-family:inherit;color:#1a0b2e;background:linear-gradient(90deg,#ffd76a,#ff9ad9);min-width:120px}
+.btn.ghost{background:#ffffff1c;color:var(--ink)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#fff;color:#111;padding:10px 16px;border-radius:999px;font-weight:700;font-size:13px;opacity:0;transition:opacity .2s;z-index:30}
+.toast.on{opacity:1}
+.hint{color:var(--sub);font-size:12px;margin-top:10px;text-align:center}
+.demo{display:flex;gap:6px;justify-content:center;margin:10px 0}
+.demo .tile{position:static;width:40px;height:40px;font-size:15px}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="app">
+  <header>
+    <div class="logo">🌠 <span>STAR DROP</span></div>
+    <div class="modes"><button id="mEndless" class="on">무한</button><button id="mDaily">오늘의 챌린지</button></div>
+  </header>
+  <div class="stats">
+    <div class="stat"><small>점수</small><b id="score">0</b></div>
+    <div class="stat"><small id="bestLbl">최고</small><b id="best">0</b></div>
+    <div class="stat"><small>최고 별</small><b id="maxv">2</b></div>
+  </div>
+  <div class="bar">
+    <div class="next">다음 <div id="n1" class="tile"></div><div id="n2" class="tile sm"></div></div>
+    <div class="tools">
+      <button class="tool" id="hammer">🔨 <span id="hc">1</span></button>
+      <button class="tool" id="swap">🔄 <span id="sc">1</span></button>
+    </div>
+  </div>
+  <div class="boardwrap">
+    <div class="board" id="board"></div>
+    <div class="combo" id="combo"></div>
+  </div>
+  <div class="hint" id="hint">칸을 탭해서 별을 떨어뜨리세요</div>
+</div>
+
+<div class="overlay" id="ovIntro"><div class="card">
+  <h2>🌠 스타 드롭</h2>
+  <p>칸을 탭해 별을 떨어뜨리세요.<br>같은 숫자가 닿으면 <b>합쳐져 2배</b>가 되고,<br>연쇄로 이어지면 <b>콤보 보너스</b>!</p>
+  <div class="demo" id="demo"></div>
+  <p style="margin-top:4px">🔨 망치: 별 하나 제거 · 🔄 교체: 다음 별 바꾸기<br>점수 1,000점마다 도구가 하나씩 충전돼요.</p>
+  <button class="btn" id="startBtn">시작하기</button>
+</div></div>
+
+<div class="overlay" id="ovOver"><div class="card">
+  <h2 id="overTitle">게임 오버</h2>
+  <div class="big" id="overScore">0</div>
+  <p id="overInfo"></p>
+  <div class="row">
+    <button class="btn" id="againBtn">다시 하기</button>
+    <button class="btn ghost" id="shareBtn">결과 공유</button>
+  </div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(()=>{
+const COLS=5,ROWS=7;
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem('sd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('sd_'+k,JSON.stringify(v))}catch(e){}}};
+
+// ---------- RNG ----------
+function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const today=(()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')})();
+function seedOf(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+
+// ---------- state ----------
+let mode='endless',rng,grid,score,maxV,cur,nxt,busy=false,hammers,swaps,nextToolAt,armed=false,maxCombo=0,moves=0,uid=1,over=false;
+
+const COLORS={2:'#4f7cff',4:'#3fb6ff',8:'#22d3b6',16:'#4ade80',32:'#a3e635',64:'#facc15',128:'#fb923c',256:'#f87171',512:'#f472b6',1024:'#c084fc',2048:'#8b5cf6',4096:'#ffd76a',8192:'#ffffff'};
+function color(v){return COLORS[v]||'linear-gradient(135deg,#ffd76a,#ff7ad9,#7aa2ff)'}
+function label(v){return v>=1048576?(v/1048576)+'M':v>=1024?(v/1024)+'K':String(v)}
+function paint(el,v){el.style.background=color(v);el.style.color=v>=4096?'#2a1650':'#fff';el.textContent=label(v)}
+
+function spawn(){
+  const top=Math.max(3,Math.min(6,Math.log2(maxV)-2|0)); // up to 2^top
+  const w=[];for(let k=1;k<=top;k++)w.push([2**k,Math.pow(0.62,k-1)]);
+  const tot=w.reduce((a,b)=>a+b[1],0);let r=rng()*tot;
+  for(const [v,p] of w){if((r-=p)<=0)return v}return 2;
+}
+
+// ---------- layout ----------
+const board=$('board');let colEls=[];
+function layout(){
+  const vw=Math.min(window.innerWidth,440),vh=window.innerHeight;
+  const byW=(vw-24-6*(COLS+1))/COLS, byH=(vh-250-6*(ROWS+1))/ROWS;
+  const c=Math.max(36,Math.min(68,Math.floor(Math.min(byW,byH))));
+  document.documentElement.style.setProperty('--cell',c+'px');
+  document.documentElement.style.setProperty('--fall',(c+6)*ROWS+'px');
+}
+function buildBoard(){
+  board.innerHTML='';board.style.gridTemplateColumns=`repeat(${COLS},var(--cell))`;colEls=[];
+  for(let c=0;c<COLS;c++){
+    const col=document.createElement('div');col.className='col';col.dataset.c=c;
+    for(let r=0;r<ROWS;r++){const s=document.createElement('div');s.className='slot';col.appendChild(s)}
+    col.addEventListener('pointerdown',e=>{e.preventDefault();onColumn(c,e)});
+    board.appendChild(col);colEls.push(col);
+  }
+}
+function slot(r,c){return colEls[c].children[r]}
+function render(fx={}){
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const s=slot(r,c),t=grid[r][c];s.innerHTML='';
+    if(t){const d=document.createElement('div');d.className='tile'+(fx[t.id]?' '+fx[t.id]:'')+(armed?' target':'');paint(d,t.v);d.dataset.r=r;d.dataset.c=c;s.appendChild(d)}
+  }
+  $('score').textContent=score.toLocaleString();
+  $('maxv').textContent=label(maxV);
+  paint($('n1'),cur);paint($('n2'),nxt);
+  $('hc').textContent=hammers;$('sc').textContent=swaps;
+  $('hammer').disabled=!hammers||busy;$('swap').disabled=!swaps||busy;
+  $('hammer').classList.toggle('armed',armed);
+  const b=bestNow();$('best').textContent=Math.max(b,score).toLocaleString();
+}
+function bestNow(){return mode==='daily'?store.get('daily_'+today,0):store.get('best',0)}
+
+// ---------- audio / haptic ----------
+let actx=null;
+function beep(n){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.value=330*Math.pow(1.12246,n);g.gain.setValueAtTime(.12,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.25);o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+.26)}catch(e){}}
+const NP=(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())?window.Capacitor.Plugins:null;
+function buzz(ms){try{if(NP&&NP.Haptics){NP.Haptics.impact({style:ms>=40?'HEAVY':ms>=25?'MEDIUM':'LIGHT'})}else if(navigator.vibrate)navigator.vibrate(ms)}catch(e){}}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+// ---------- core ----------
+function newGame(m){
+  mode=m;rng=m==='daily'?mulberry(seedOf('stardrop'+today)):mulberry((Math.random()*2**32)>>>0);
+  grid=Array.from({length:ROWS},()=>Array(COLS).fill(null));
+  score=0;maxV=2;hammers=1;swaps=1;nextToolAt=1000;maxCombo=0;moves=0;over=false;armed=false;busy=false;
+  cur=spawn();nxt=spawn();
+  $('mEndless').classList.toggle('on',m==='endless');$('mDaily').classList.toggle('on',m==='daily');
+  $('bestLbl').textContent=m==='daily'?'오늘 최고':'최고';
+  $('hint').textContent=m==='daily'?`${today} 챌린지 · 모두 같은 순서의 별이 나와요`:'칸을 탭해서 별을 떨어뜨리세요';
+  render();
+}
+function findTile(id){for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(grid[r][c]&&grid[r][c].id===id)return [r,c];return null}
+
+async function onColumn(c){
+  if(busy||over)return;
+  if(armed)return; // hammer handled on tile
+  let r=-1;for(let i=ROWS-1;i>=0;i--)if(!grid[i][c]){r=i;break}
+  const fx={};
+  if(r<0){
+    if(grid[0][c].v===cur){r=0}else{board.classList.remove('shake');void board.offsetWidth;board.classList.add('shake');buzz(30);return}
+  }
+  busy=true;moves++;
+  let active;
+  if(grid[r][c]){ // merge into full top
+    grid[r][c].v*=2;fx[grid[r][c].id]='pop';active=[grid[r][c].id];addScore(grid[r][c].v,1,r,c);
+  }else{
+    const t={v:cur,id:uid++};grid[r][c]=t;fx[t.id]='drop';active=[t.id];
+  }
+  cur=nxt;nxt=spawn();
+  render(fx);beep(0);
+  await sleep(200);
+  await resolve(active);
+  busy=false;afterTurn();
+}
+
+async function resolve(active){
+  let combo=0;
+  while(active.length){
+    const fx={};let merged=[];
+    // prefer lowest active first
+    active.sort((a,b)=>{const pa=findTile(a),pb=findTile(b);return (pb?pb[0]:0)-(pa?pa[0]:0)});
+    for(const id of active){
+      const p=findTile(id);if(!p)continue;const [r,c]=p;const t=grid[r][c];
+      const nb=[[r+1,c],[r,c-1],[r,c+1],[r-1,c]].filter(([y,x])=>y>=0&&y<ROWS&&x>=0&&x<COLS&&grid[y][x]&&grid[y][x].v===t.v);
+      if(!nb.length)continue;
+      for(const [y,x] of nb)grid[y][x]=null;
+      t.v*=2**nb.length;combo++;
+      addScore(t.v,combo,r,c);fx[t.id]='pop';merged.push(t.id);
+    }
+    if(!merged.length)break;
+    maxCombo=Math.max(maxCombo,combo);
+    render(fx);beep(combo*2);buzz(15+combo*10);
+    if(combo>=2)showCombo(combo);
+    await sleep(240);
+    // gravity
+    const moved=gravity();
+    const fx2={};moved.forEach(id=>fx2[id]='fall');
+    if(moved.length){render(fx2);await sleep(150)}
+    active=[...new Set([...merged,...moved])];
+  }
+}
+function gravity(){
+  const moved=[];
+  for(let c=0;c<COLS;c++){
+    let w=ROWS-1;
+    for(let r=ROWS-1;r>=0;r--){const t=grid[r][c];if(t){if(r!==w){grid[w][c]=t;grid[r][c]=null;moved.push(t.id)}w--}}
+  }
+  return moved;
+}
+function addScore(v,combo,r,c){
+  const pts=v*combo;score+=pts;maxV=Math.max(maxV,v);
+  floatText('+'+pts.toLocaleString(),r,c);
+  while(score>=nextToolAt){nextToolAt+=1000;if(nextToolAt%2000===0)swaps++;else hammers++;toast('🎁 도구 충전!')}
+}
+function floatText(txt,r,c){
+  const s=slot(r,c);const f=document.createElement('div');f.className='float';f.textContent=txt;
+  const br=board.getBoundingClientRect(),sr=s.getBoundingClientRect();
+  f.style.left=(sr.left-br.left+4)+'px';f.style.top=(sr.top-br.top)+'px';
+  board.parentElement.appendChild(f);setTimeout(()=>f.remove(),720);
+}
+function showCombo(n){const el=$('combo');el.textContent='COMBO x'+n;el.classList.remove('show');void el.offsetWidth;el.classList.add('show')}
+
+function afterTurn(){
+  render();
+  const canPlace=[...Array(COLS).keys()].some(c=>!grid[0][c]||grid[0][c].v===cur);
+  if(!canPlace&&!hammers&&!swaps)return gameOver();
+  if(!canPlace)toast('칸이 가득! 🔨 또는 🔄 를 써보세요');
+}
+function gameOver(){
+  over=true;
+  const key=mode==='daily'?'daily_'+today:'best';const prev=store.get(key,0);const isNew=score>prev;
+  if(isNew)store.set(key,score);
+  // streak
+  if(mode==='daily'){const last=store.get('lastDaily','');if(last!==today){const y=new Date(Date.now()-864e5);const ys=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');store.set('streak',last===ys?store.get('streak',0)+1:1);store.set('lastDaily',today)}}
+  $('overTitle').textContent=isNew?'🎉 신기록!':'게임 오버';
+  $('overScore').textContent=score.toLocaleString();
+  $('overInfo').innerHTML=`최고 별 <b>${label(maxV)}</b> · 최대 콤보 <b>x${maxCombo}</b> · ${moves}수`+(mode==='daily'?`<br>🔥 챌린지 연속 ${store.get('streak',1)}일`:'');
+  render();setTimeout(()=>$('ovOver').classList.add('on'),400);
+}
+
+// ---------- tools ----------
+$('hammer').addEventListener('click',()=>{if(busy||!hammers||over)return;armed=!armed;$('hint').textContent=armed?'제거할 별을 탭하세요':'칸을 탭해서 별을 떨어뜨리세요';render()});
+$('swap').addEventListener('click',()=>{if(busy||!swaps||over)return;swaps--;cur=nxt;nxt=spawn();beep(4);render();afterTurn()});
+board.addEventListener('pointerdown',async e=>{
+  if(!armed||busy)return;const t=e.target.closest('.tile');if(!t)return;
+  e.stopPropagation();const r=+t.dataset.r,c=+t.dataset.c;
+  armed=false;hammers--;busy=true;grid[r][c]=null;buzz(40);beep(-3);
+  $('hint').textContent='칸을 탭해서 별을 떨어뜨리세요';
+  render();await sleep(120);const moved=gravity();const fx={};moved.forEach(id=>fx[id]='fall');render(fx);await sleep(160);
+  await resolve(moved);busy=false;afterTurn();
+},true);
+
+// ---------- share / ui ----------
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1600)}
+$('shareBtn').addEventListener('click',async()=>{
+  const bar='⭐'.repeat(Math.min(10,Math.max(1,Math.log2(maxV)-2|0)));
+  const txt=`🌠 STAR DROP ${mode==='daily'?today+' 챌린지':'무한 모드'}\n점수 ${score.toLocaleString()} · 최고 별 ${label(maxV)} · 콤보 x${maxCombo}\n${bar}`;
+  try{if(NP&&NP.Share){await NP.Share.share({title:'STAR DROP',text:txt});return}await navigator.clipboard.writeText(txt);toast('결과를 복사했어요')}catch(e){toast('공유가 취소되었어요')}
+});
+$('againBtn').addEventListener('click',()=>{$('ovOver').classList.remove('on');newGame(mode)});
+$('startBtn').addEventListener('click',()=>{$('ovIntro').classList.remove('on');store.set('seen',1);beep(0)});
+$('mEndless').addEventListener('click',()=>{if(!busy)newGame('endless')});
+$('mDaily').addEventListener('click',()=>{if(!busy)newGame('daily')});
+[2,2,'→',4].forEach(v=>{const d=document.createElement('div');if(v==='→'){d.textContent='→';d.style.cssText='align-self:center;color:#9aa3d6'}else{d.className='tile';paint(d,v)}$('demo').appendChild(d)});
+
+// ---------- starfield ----------
+const cv=$('stars'),cx=cv.getContext('2d');let st=[];
+function sz(){cv.width=innerWidth;cv.height=innerHeight;st=Array.from({length:70},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.4+.3,p:Math.random()*6}))}
+function tick(t){cx.clearRect(0,0,cv.width,cv.height);for(const s of st){cx.globalAlpha=.4+.4*Math.sin(t/900+s.p);cx.fillStyle='#fff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill()}requestAnimationFrame(tick)}
+addEventListener('resize',()=>{layout();sz()});
+
+layout();sz();requestAnimationFrame(tick);buildBoard();newGame('endless');
+if(!store.get('seen',0))$('ovIntro').classList.add('on');
+try{if(NP&&NP.App){NP.App.addListener('backButton',()=>{if($('ovOver').classList.contains('on')||$('ovIntro').classList.contains('on')){NP.App.exitApp()}else if(armed){armed=false;render()}else{NP.App.minimizeApp?NP.App.minimizeApp():NP.App.exitApp()}})}
+if(NP&&NP.SplashScreen)NP.SplashScreen.hide()}catch(e){}
+
+})();
+</script>
+</body>
+</html>

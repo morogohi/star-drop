@@ -1,0 +1,12 @@
+{
+  "appId": "com.morogohi.stardrop",
+  "appName": "스타 드롭",
+  "webDir": "www",
+  "backgroundColor": "#0b1026",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never" },
+  "plugins": {
+    "SplashScreen": { "launchShowDuration": 800, "backgroundColor": "#0b1026", "showSpinner": false },
+    "StatusBar": { "style": "DARK", "backgroundColor": "#0b1026", "overlaysWebView": false }
+  }
+}
