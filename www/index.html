@@ -143,6 +143,11 @@ header{width:100%;max-width:420px;display:flex;justify-content:space-between;ali
   <div class="adbox"><b id="adCount">3</b>실제 앱에서는 AdMob 보상형 광고가 재생돼요</div>
   <button class="btn ghost" id="adSkip" disabled>보상 받기</button>
 </div></div>
+<div class="overlay" id="ovNotif" style="z-index:30"><div class="card">
+  <h2>🔔 오늘의 챌린지 알림</h2>
+  <p>매일 저녁 8시에 새 챌린지가 열렸다고 알려드릴까요?<br>연속 기록을 놓치지 않게 도와드려요.</p>
+  <div class="row"><button class="btn" id="notifYes">알림 받기</button><button class="btn ghost" id="notifNo">나중에</button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script src="config.js"></script>
@@ -174,7 +179,8 @@ function label(v){return v>=1048576?(v/1048576)+'M':v>=1024?(v/1024)+'K':String(
 function paint(el,v){const S=SKINS[skin];el.style.background=color(v);el.style.color=(S.dark||v>=4096)?'#2a1650':'#fff';el.style.textShadow=S.dark?'none':'';el.style.boxShadow=S.glow?'0 0 14px '+color(v)+', inset 0 -4px 0 #0003':'';el.textContent=label(v)}
 
 function spawn(){
-  const top=Math.max(3,Math.min(6,Math.log2(maxV)-2|0)); // up to 2^top
+  let top=Math.max(3,Math.min(6,Math.log2(maxV)-2|0)); // up to 2^top
+  if(store.get('games',0)<1&&moves<30)top=2; // 첫 판: 2·4만 나와 콤보를 쉽게 경험
   const w=[];for(let k=1;k<=top;k++)w.push([2**k,Math.pow(0.62,k-1)]);
   const tot=w.reduce((a,b)=>a+b[1],0);let r=rng()*tot;
   for(const [v,p] of w){if((r-=p)<=0)return v}return 2;
@@ -316,13 +322,14 @@ function gameOver(){
   if(isNew)store.set(key,score);
   // streak
   if(mode==='daily'){const last=store.get('lastDaily','');if(last!==today){const y=new Date(Date.now()-864e5);const ys=y.getFullYear()+'-'+String(y.getMonth()+1).padStart(2,'0')+'-'+String(y.getDate()).padStart(2,'0');store.set('streak',last===ys?store.get('streak',0)+1:1);store.set('lastDaily',today)}}
+  store.set('games',store.get('games',0)+1);GA.design('games:played',store.get('games',0));
   earned=Math.floor(score/50)+maxCombo*2+(mode==='daily'?20:0);addCoins(earned);
   $('coinEarn').innerHTML='🪙 +'+earned+' 코인 획득';$('dblBtn').style.display=earned>0?'':'none';
   GA.progression('Complete',mode,score);GA.design('combo:max',maxCombo);
   $('overTitle').textContent=isNew?'🎉 신기록!':'게임 오버';
   $('overScore').textContent=score.toLocaleString();
   $('overInfo').innerHTML=`최고 별 <b>${label(maxV)}</b> · 최대 콤보 <b>x${maxCombo}</b> · ${moves}수`+(mode==='daily'?`<br>🔥 챌린지 연속 ${store.get('streak',1)}일`:'');
-  render();setTimeout(()=>$('ovOver').classList.add('on'),400);
+  render();setTimeout(()=>{$('ovOver').classList.add('on');maybeAskNotif()},400);
 }
 
 // ---------- tools ----------
@@ -397,6 +404,23 @@ $('contAd').addEventListener('click',()=>rewardFor('continue',async()=>{
   for(let r=0;r<2;r++)for(let c=0;c<COLS;c++)grid[r][c]=null;
   render();toast('위쪽 두 줄을 비웠어요!');}));
 $('contNo').addEventListener('click',()=>{$('ovCont').classList.remove('on');gameOver()});
+
+
+// ---------- daily reminder (local notification) ----------
+const LN=NP&&NP.LocalNotifications;
+async function scheduleDaily(){
+  if(!LN)return false;
+  try{let p=await LN.checkPermissions();if(p.display!=='granted')p=await LN.requestPermissions();if(p.display!=='granted')return false;
+    await LN.cancel({notifications:[{id:2026}]}).catch(()=>{});
+    await LN.schedule({notifications:[{id:2026,title:'🌠 오늘의 챌린지가 열렸어요',body:'모두 같은 별 순서로 겨루는 오늘의 퍼즐! 연속 기록을 이어가세요 🔥',schedule:{on:{hour:20,minute:0},allowWhileIdle:false}}]});
+    return true}catch(e){return false}}
+function maybeAskNotif(){
+  if(!LN)return;const st=store.get('notif','');
+  if(st==='on'||st==='off'||store.get('games',0)<2||store.get('games',0)<store.get('notifAskAt',0))return; // 두 번째 판이 끝난 뒤 한 번만 물어봄
+  setTimeout(()=>$('ovNotif').classList.add('on'),900)}
+$('notifYes').addEventListener('click',async()=>{$('ovNotif').classList.remove('on');const ok=await scheduleDaily();store.set('notif',ok?'on':'off');GA.design('notif:'+(ok?'on':'denied'),1);toast(ok?'🔔 매일 저녁 8시에 알려드릴게요':'알림이 꺼져 있어요. 설정에서 켤 수 있어요')});
+$('notifNo').addEventListener('click',()=>{$('ovNotif').classList.remove('on');store.set('notif','later');store.set('notifAskAt',store.get('games',0)+3);GA.design('notif:later',1)});
+if(store.get('notif','')==='on')scheduleDaily();
 
 // ---------- share / ui ----------
 let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1600)}
