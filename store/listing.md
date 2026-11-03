@@ -83,8 +83,9 @@ Faster than 2048, easier than Tetris. Start dropping stars now! 🌠
 - 카테고리: 게임 → 폭력/공포/성적 내용/도박/사용자 간 상호작용/구매 모두 **아니요** → 예상 등급: 전체이용가 / PEGI 3 / ESRB Everyone
 
 ## 필요 URL
-- 개인정보처리방침 URL: `privacy.html`을 GitHub Pages 등에 올린 주소 (예: https://morogohi.github.io/stardrop/privacy.html)
-- 지원 URL: 같은 페이지 또는 이메일 링크 페이지
+- 개인정보처리방침 URL: https://claude.ai/artifact/XXXqNYXMZcnWaCimfAv35u#privacy (공개 전환 필요)
+- 지원 URL: https://claude.ai/artifact/XXXqNYXMZcnWaCimfAv35u#support
+- 문의 이메일: morogohi@gmail.com
 
 ## 그래픽 자료 (store/ 폴더)
 | 파일 | 용도 | 규격 |

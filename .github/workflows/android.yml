@@ -6,6 +6,9 @@ on:
     tags: ['v*']
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -41,12 +44,32 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug bundleRelease --no-daemon
 
+      - name: Check signing (release tags)
+        if: startsWith(github.ref, 'refs/tags/v') && env.ANDROID_KEYSTORE_PATH == ''
+        run: |
+          echo "::error::출시 태그인데 서명키 Secrets가 없습니다. DEPLOY.md 3-3 참고 (ANDROID_KEYSTORE_BASE64 등 4개)"
+          exit 1
+
+      - name: Rename outputs
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/stardrop-${{ github.ref_name }}-test.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab dist/stardrop-${{ github.ref_name }}-play.aab
+
+      - name: GitHub Release (v* 태그)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          body: |
+            - `*-play.aab` → Google Play Console에 업로드 (서명됨)
+            - `*-test.apk` → 안드로이드 폰에 바로 설치해 보는 테스트용
+
       - uses: actions/upload-artifact@v4
         with:
           name: stardrop-android
-          path: |
-            android/app/build/outputs/apk/debug/*.apk
-            android/app/build/outputs/bundle/release/*.aab
+          path: dist/*
 
       # 선택: Play Console 내부 테스트 트랙 자동 업로드 (secrets.PLAY_SERVICE_ACCOUNT_JSON 설정 시)
       - name: Upload to Google Play (internal)
