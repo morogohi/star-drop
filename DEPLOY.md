@@ -112,6 +112,8 @@ cd android && ./gradlew bundleRelease
 
 ## 4. 아이폰 (App Store)
 
+> **2.0.0부터 iOS 출시 빌드는 Codemagic(`codemagic.yaml`)으로 합니다.** 아래 4-2(Mac 직접 업로드)는 Mac이 있을 때의 대안이고, 4-3(GitHub Actions 업로드)은 더 이상 쓰지 않습니다. 최신 절차는 README의 "iOS 배포 (Codemagic)"와 배포 가이드 문서를 따르세요.
+
 ### 4-1. Apple 쪽 준비 (https://developer.apple.com, https://appstoreconnect.apple.com)
 1. Apple Developer Program 가입 (연 $99)
 2. **Certificates, IDs & Profiles → Identifiers**에서 App ID `com.morogohi.stardrop` 등록

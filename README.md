@@ -22,6 +22,35 @@
 | `ads/` | CPI 테스트용 광고 영상 |
 | `.github/workflows/` | 자동 빌드 (Android AAB/APK, iOS TestFlight) |
 
+## 로컬 작업 폴더 (Windows)
+```
+C:\Project\star-drop\
+├─ key_backup\          안드로이드 업로드 키(stardrop-upload.jks) + keystore.properties 백업 (git 밖)
+└─ star-drop\           이 저장소
+```
+
+## 자동화 스크립트
+| 파일 | 하는 일 |
+|---|---|
+| `release-config.json` + `configure.bat` | 앱 ID, 버전, AdMob ID, 개발자명·이메일을 한 곳에서 입력 → Android/iOS/웹/개인정보처리방침/Codemagic 전체에 반영. 다시 실행해도 안전 |
+| `build-android.bat` / `build-android.bat release` | 디버그 APK(USB 연결된 폰에 자동 설치) / Play 업로드용 AAB (`stardrop-release.aab`) |
+| `codemagic.yaml` | Mac 없이 Codemagic에서 iOS 빌드 → 서명 → TestFlight 업로드 |
+| `.github/workflows/android.yml` | push마다 APK/AAB 빌드, `v*` 태그면 GitHub Releases에 첨부 |
+| `.github/workflows/ios.yml` | push마다 iOS 컴파일 확인 (업로드는 Codemagic) |
+| `docs/` | GitHub Pages: 소개, 웹 플레이(`docs/play`), 개인정보처리방침, 고객지원, app-ads.txt |
+
+## iOS 배포 (Codemagic)
+1. App Store Connect에 앱 생성 (번들 ID `com.morogohi.stardrop`) → 앱 정보의 **Apple ID(숫자)** 확인
+2. [codemagic.io](https://codemagic.io) → GitHub로 로그인 → **Add application** → `morogohi/star-drop` → 설정 방식 `codemagic.yaml`
+3. Teams → Integrations → **Developer Portal**에 App Store Connect API 키(Admin) 연결. 궤도 점프에서 만든 `OrbitHop ASC`를 그대로 써도 됩니다
+4. `codemagic.yaml`의 ★ 두 곳(통합 이름, `APP_STORE_APPLE_ID`) 확인 후 push
+5. Codemagic에서 **Start new build** → `ios-release` (또는 `v*` 태그 push 시 자동) → 약 15~25분 뒤 TestFlight에 업로드
+
+## Android 배포
+1. `C:\Project\star-drop\key_backup\keystore.properties`를 `android\keystore.properties`로 복사
+2. `build-android.bat release` → `stardrop-release.aab`를 Play Console에 업로드
+   (또는 GitHub Secrets 4개 등록 후 `v*` 태그 push → Releases에서 AAB 다운로드)
+
 ## 실행
 ```bash
 npm ci && npx cap sync

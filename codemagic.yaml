@@ -1,0 +1,52 @@
+# Codemagic: iOS 빌드 → 서명 → TestFlight 업로드 (Mac 불필요)
+# 처음 실행 전에 ★ 표시된 값 2개를 확인하세요 (배포 가이드 2단계).
+workflows:
+  ios-release:
+    name: iOS → TestFlight
+    max_build_duration: 60
+    instance_type: mac_mini_m2            # 개인 계정: M2 매월 500분 무료
+    integrations:
+      app_store_connect: OrbitHop ASC     # ★ Codemagic > Teams > Integrations > Developer Portal 에 등록한 API 키 이름 (궤도 점프용 키를 그대로 써도 됩니다)
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.morogohi.stardrop
+      vars:
+        XCODE_PROJECT: ios/App/App.xcodeproj
+        XCODE_SCHEME: App
+        APP_STORE_APPLE_ID: 0000000000    # ★ App Store Connect > 앱 정보 > Apple ID (숫자 10자리)
+      node: 22
+      xcode: latest                       # 2026-04-28부터 업로드는 Xcode 26 이상 필수
+    triggering:
+      events: [tag]
+      tag_patterns:
+        - pattern: 'v*'
+    scripts:
+      - name: 의존성 설치
+        script: npm ci
+      - name: 웹 파일을 iOS 프로젝트로 복사
+        script: npx cap sync ios
+      - name: 서명 프로파일 적용
+        script: xcode-project use-profiles
+      - name: 서명된 IPA 빌드 (빌드 번호 = App Store Connect 최신 + 1)
+        script: |
+          LATEST=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          NEXT=$((LATEST + 1))
+          echo "Build number: $NEXT"
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME" \
+            --archive-xcargs "CURRENT_PROJECT_VERSION=$NEXT"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+      email:
+        recipients:
+          - morogohi@gmail.com
+        notify:
+          success: true
+          failure: true

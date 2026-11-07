@@ -10,10 +10,10 @@
 | ✅ | 버전 | 2.0.0 (빌드 번호는 GitHub 실행 번호로 자동 증가) |
 | ✅ | 설명·키워드·부제 (한/영) | `store/listing.md` |
 | ✅ | 아이콘 1024 · 스크린샷 · 그래픽 이미지 | `store/` |
-| ✅ | 개인정보처리방침·지원 페이지 | https://claude.ai/artifact/XXXqNYXMZcnWaCimfAv35u |
-| 👤 | ↑ 페이지를 **링크가 있는 모든 사용자에게 공개**로 전환 | 페이지 우측 상단 공유 버튼 |
-| ✅ | 개인정보처리방침 URL | 위 주소 + `#privacy` |
-| ✅ | 지원 URL | 위 주소 + `#support` |
+| ✅ | 개인정보처리방침·지원 페이지 | `docs/` 폴더 (GitHub Pages) |
+| 👤 | GitHub 저장소 Settings → Pages → Branch `main` / 폴더 `/docs` → Save | 1회 |
+| ✅ | 개인정보처리방침 URL | https://morogohi.github.io/star-drop/privacy-policy.html |
+| ✅ | 지원 URL | https://morogohi.github.io/star-drop/support.html |
 | ✅ | 문의 이메일 | morogohi@gmail.com |
 | ⚠️ | 광고 | 현재 **Google 테스트 광고 ID**로 설정됨 → 수익 0. AdMob 가입 후 교체 (GROWTH.md 1-2) |
 | ⚠️ | 분석 | GameAnalytics 키 미입력 → 측정 꺼짐 (`www/config.js`) |
@@ -39,7 +39,8 @@
 | ✅ | 수출 규정(암호화 없음) | Info.plist에 설정 → 제출 시 질문 생략 |
 | ✅ | iPhone 전용, 세로 고정 | iPad 스크린샷 불필요 |
 | ✅ | 6.9" 스크린샷 3장 | `store/screens/ios-6.9/` |
-| 👤 | 빌드 업로드: **(A) Mac + Xcode** 또는 **(B) App Store Connect API 키 4개를 GitHub Secrets에 등록** → push 시 TestFlight 자동 업로드 | DEPLOY.md 4-2 / 4-3 |
+| ✅ | Codemagic 설정 | `codemagic.yaml` (iOS → TestFlight) |
+| 👤 | Codemagic에 저장소 연결, API 키 통합 이름·Apple ID 숫자 확인 후 빌드 시작 | 배포 가이드 2단계 |
 | ✅ | 앱 개인정보 응답(App Privacy) | `store/listing.md` v1.1 |
 | ✅ | 연령 등급 | 4+ (광고 포함이지만 내용상 4+) |
 | 👤 | 심사 제출 | 심사 메모: "로그인 없이 바로 플레이하는 오프라인 퍼즐 게임. 보상형 광고는 Google 테스트 광고입니다." |

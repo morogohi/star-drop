@@ -1,0 +1,16 @@
+{
+  "_help": "출시 전에 이 파일만 채우고 configure.bat 를 더블클릭하세요. 모든 프로젝트 파일에 한 번에 반영됩니다. AdMob ID 5개를 모두 채우면 테스트 광고에서 실제 광고로 바뀝니다.",
+  "appId": "com.morogohi.stardrop",
+  "versionName": "2.0.0",
+  "versionCode": 20,
+  "developerName": "Inseok Yang",
+  "contactEmail": "morogohi@gmail.com",
+  "pagesUrl": "https://morogohi.github.io/star-drop",
+  "admob": {
+    "publisherId": "pub-8387477370861262",
+    "androidAppId": "",
+    "iosAppId": "",
+    "androidRewarded": "",
+    "iosRewarded": ""
+  }
+}

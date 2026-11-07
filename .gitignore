@@ -7,3 +7,15 @@ node_modules/
 *.p12
 *.mobileprovision
 android/keystore.properties
+# 로컬 빌드 산출물·비밀 파일
+android/local.properties
+android/.gradle/
+android/app/build/
+android/build/
+ios/App/build/
+ios/DerivedData/
+build/
+stardrop-*.apk
+stardrop-*.aab
+ios-upload.env
+key_backup/
