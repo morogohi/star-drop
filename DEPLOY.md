@@ -51,11 +51,11 @@ npx cap open ios
 
 ## 2. GitHub Actions 자동 빌드 (Mac 없이도 가능)
 
-1. GitHub에 새 저장소(예: `morogohi/stardrop`, **Private 권장**)를 만들고 이 폴더를 push 합니다.
+1. GitHub에 새 저장소(예: `morogohi/star-drop`, **Private 권장**)를 만들고 이 폴더를 push 합니다.
    ```bash
    git init && git add . && git commit -m "STAR DROP 1.0.0"
    git branch -M main
-   git remote add origin https://github.com/morogohi/stardrop.git
+   git remote add origin https://github.com/morogohi/star-drop.git
    git push -u origin main
    ```
 2. **Actions** 탭에서 `Android Build`, `iOS Build`가 자동 실행됩니다.

@@ -1,4 +1,4 @@
-# 스타 드롭 출시 체크리스트 (v1.2.0)
+# 스타 드롭 출시 체크리스트 (v2.0.0)
 
 ✅ = 준비 완료 · 👤 = Austin님이 직접 해야 함 (계정·결제·약관·비밀번호)
 
@@ -7,7 +7,7 @@
 |---|---|---|
 | ✅ | 앱 이름 | 스타 드롭 - 별 합치기 퍼즐 / Star Drop - Merge Puzzle |
 | ✅ | 번들 ID / 패키지명 | `com.morogohi.stardrop` (출시 후 변경 불가) |
-| ✅ | 버전 | 1.2.0 (빌드 번호는 GitHub 실행 번호로 자동 증가) |
+| ✅ | 버전 | 2.0.0 (빌드 번호는 GitHub 실행 번호로 자동 증가) |
 | ✅ | 설명·키워드·부제 (한/영) | `store/listing.md` |
 | ✅ | 아이콘 1024 · 스크린샷 · 그래픽 이미지 | `store/` |
 | ✅ | 개인정보처리방침·지원 페이지 | https://claude.ai/artifact/XXXqNYXMZcnWaCimfAv35u |
@@ -24,7 +24,7 @@
 | 👤 | Play Console 개발자 등록 ($25) | 개인 계정이면 신원 인증 + **테스터 12명 × 14일** 비공개 테스트가 필수 |
 | ✅ | 업로드 서명키 | `stardrop-upload.jks` (대화로 전달됨) |
 | 👤 | GitHub Secrets 4개 등록 | `STARDROP_SIGNING_KEY.txt`에 적힌 값 그대로 |
-| ✅ | 출시용 빌드 자동화 | `git tag v1.2.0 && git push --tags` → GitHub **Releases**에 `*-play.aab`, `*-test.apk` 첨부 |
+| ✅ | 출시용 빌드 자동화 | `git tag v2.0.0 && git push --tags` → GitHub **Releases**에 `*-play.aab`, `*-test.apk` 첨부 |
 | ✅ | target SDK 36, 세로 고정, 정확 알람 권한 제거 | Play 정책 충족 |
 | ✅ | 데이터 보안·광고 포함·콘텐츠 등급 응답 | `store/listing.md` v1.1 응답 |
 | 👤 | 앱 만들기 → 앱 콘텐츠 작성 → 비공개 테스트 트랙에 AAB 업로드 → 테스터 초대 | Play App Signing 사용 (기본값) |

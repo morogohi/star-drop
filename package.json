@@ -1,11 +1,11 @@
 {
   "name": "stardrop",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
   "description": "STAR DROP - 드롭 머지 퍼즐 게임",
   "scripts": {
     "sync": "npx cap sync",
-    "assets": "npx capacitor-assets generate --iconBackgroundColor '#0b1026' --iconBackgroundColorDark '#0b1026' --splashBackgroundColor '#0b1026' --splashBackgroundColorDark '#0b1026'",
+    "assets": "npx capacitor-assets generate --iconBackgroundColor '#0E1430' --iconBackgroundColorDark '#0E1430' --splashBackgroundColor '#0E1430' --splashBackgroundColorDark '#0E1430'",
     "android": "npx cap open android",
     "ios": "npx cap open ios"
   },
