@@ -35,9 +35,11 @@
 • 연쇄 콤보 — 하나 놓았을 뿐인데 연달아 터지는 쾌감
 • 오늘의 챌린지 — 매일 모든 플레이어에게 같은 순서의 별이 나와요. 친구와 점수를 비교해보세요
 • 연속 참여 기록 — 매일 도전하고 기록을 이어가세요
+• 레벨이 오를수록 커지는 별과 운석 — 점점 짜릿해지는 난이도
+• 오늘의 미션 3개, 별 도감 13종, 스킨 10종 (동물·바다·디저트 친구들)
 • 망치·교체 도구 — 위기 탈출을 위한 전략 아이템
 • 와이파이 없이도 플레이 가능
-• 개인정보 수집 없음
+• 무료 게임 (광고 포함)
 
 2048보다 빠르고, 테트리스보다 쉬워요.
 지금 바로 별을 떨어뜨려 보세요! 🌠
@@ -61,13 +63,14 @@ Faster than 2048, easier than Tetris. Start dropping stars now! 🌠
 
 ## 이번 버전의 새로운 기능 (1.0.0)
 ```
-스타 드롭 첫 출시! 무한 모드와 오늘의 챌린지를 즐겨보세요.
+스타 드롭 3.0: 레벨·운석, 오늘의 미션, 별 도감, 동물·바다·디저트 스킨, 배경음악이 추가됐어요.
 ```
 
-## App Store 앱 개인정보 보호 (App Privacy) 응답 — v1.1 (AdMob + GameAnalytics)
+## App Store 앱 개인정보 보호 (App Privacy) 응답 — v3.0 (AdMob 보상형·전면 + GameAnalytics, ATT 요청)
 - 데이터 수집: **예**
-- **Identifiers › Device ID** — 제3자 광고, 분석 / 사용자와 연결 안 됨 / 추적에 사용: ATT 요청 시 예, 미요청 시 아니요
-- **Usage Data › Product Interaction, Advertising Data** — 제3자 광고, 분석 / 연결 안 됨
+- **Identifiers › Device ID** — 제3자 광고, 분석 / 사용자와 연결 안 됨 / **추적에 사용: 예** (v3.0부터 ATT 요청)
+- **Usage Data › Product Interaction** — 분석 / 연결 안 됨
+- **Usage Data › Advertising Data** — 제3자 광고 / 연결 안 됨 / **추적에 사용: 예**
 - **Diagnostics › Other Diagnostic Data** — 분석 / 연결 안 됨
 - **Location › Coarse Location** (IP 기반, AdMob) — 제3자 광고 / 연결 안 됨
 

@@ -8,6 +8,8 @@
 	<string>en</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>허용하시면 관심사에 맞는 광고가 표시되어 무료 게임 운영에 도움이 됩니다. 허용하지 않아도 게임은 그대로 즐길 수 있어요.</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>
 	<key>SKAdNetworkItems</key>

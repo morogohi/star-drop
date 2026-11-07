@@ -28,13 +28,13 @@ if (!/^\d+\.\d+\.\d+$/.test(String(cfg.versionName))) errors.push(`versionName "
 if (!Number.isInteger(cfg.versionCode) || cfg.versionCode < 1) errors.push('versionCode는 1 이상의 정수여야 합니다.');
 
 const ad = cfg.admob || {};
-const ids = ['androidAppId', 'iosAppId', 'androidRewarded', 'iosRewarded'];
+const ids = ['androidAppId', 'iosAppId', 'androidRewarded', 'iosRewarded', 'androidInterstitial', 'iosInterstitial'];
 const allAd = ids.every(k => ad[k]);
 if (ad.androidAppId && !ADMOB_APP_RE.test(ad.androidAppId)) errors.push('admob.androidAppId 형식 오류 (ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY)');
 if (ad.iosAppId && !ADMOB_APP_RE.test(ad.iosAppId)) errors.push('admob.iosAppId 형식 오류 (ca-app-pub-XXXXXXXXXXXXXXXX~YYYYYYYYYY)');
-for (const k of ['androidRewarded', 'iosRewarded']) if (ad[k] && !ADMOB_UNIT_RE.test(ad[k])) errors.push(`admob.${k} 형식 오류 (ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY)`);
+for (const k of ['androidRewarded', 'iosRewarded', 'androidInterstitial', 'iosInterstitial']) if (ad[k] && !ADMOB_UNIT_RE.test(ad[k])) errors.push(`admob.${k} 형식 오류 (ca-app-pub-XXXXXXXXXXXXXXXX/YYYYYYYYYY)`);
 if (ad.publisherId && !PUB_RE.test(ad.publisherId)) errors.push('admob.publisherId 형식 오류 (pub-XXXXXXXXXXXXXXXX)');
-if (!allAd) warnings.push('AdMob 앱 ID·광고 단위 ID 4개가 모두 채워지지 않아 테스트 광고 모드를 유지합니다.');
+if (!allAd) warnings.push('AdMob 앱 ID 2개·광고 단위 ID 4개가 모두 채워지지 않아 테스트 광고 모드를 유지합니다.');
 
 if (errors.length) {
   console.error('\n[오류] release-config.json을 고쳐 주세요:\n - ' + errors.join('\n - '));
@@ -90,9 +90,9 @@ if (ad.androidAppId) edit('android/app/src/main/AndroidManifest.xml', s =>
 if (ad.iosAppId) edit('ios/App/App/Info.plist', s =>
   s.replace(/(<key>GADApplicationIdentifier<\/key>\s*<string>)[^<]*(<\/string>)/, `$1${ad.iosAppId}$2`));
 if (allAd) edit('www/config.js', s => s
-  .replace(/testing:\s*(true|false)/, 'testing: false')
-  .replace(/(ios:\s*')ca-app-pub-[^']*(')/, `$1${ad.iosRewarded}$2`)
-  .replace(/(android:\s*')ca-app-pub-[^']*(')/, `$1${ad.androidRewarded}$2`));
+  .replace(/^(\s*)testing:\s*(true|false)/m, '$1testing: false')
+  .replace(/(rewarded:\s*\{\s*ios:\s*')[^']*('\s*,\s*android:\s*')[^']*(')/, `$1${ad.iosRewarded}$2${ad.androidRewarded}$3`)
+  .replace(/(interstitial:\s*\{\s*ios:\s*')[^']*('\s*,\s*android:\s*')[^']*(')/, `$1${ad.iosInterstitial}$2${ad.androidInterstitial}$3`));
 if (ad.publisherId) edit('docs/app-ads.txt', s => s.replace(/^(google\.com, )pub-[X\d]{16}/m, `$1${ad.publisherId}`));
 
 // 개인정보처리방침·지원 페이지 링크
