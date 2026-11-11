@@ -8,11 +8,11 @@
   "pagesUrl": "https://morogohi.github.io/star-drop",
   "admob": {
     "publisherId": "pub-8387477370861262",
-    "androidAppId": "",
-    "iosAppId": "",
-    "androidRewarded": "",
-    "iosRewarded": "",
-    "androidInterstitial": "",
-    "iosInterstitial": ""
+    "androidAppId": "ca-app-pub-8387477370861262~8133127457",
+    "iosAppId": "ca-app-pub-8387477370861262~4504214497",
+    "androidRewarded": "ca-app-pub-8387477370861262/8264330257",
+    "iosRewarded": "ca-app-pub-8387477370861262/8343900506",
+    "androidInterstitial": "ca-app-pub-8387477370861262/9760923956",
+    "iosInterstitial": "ca-app-pub-8387477370861262/8251887816"
   }
 }

@@ -10,7 +10,7 @@
         <!-- AdMob 앱 ID: 아래는 Google 테스트 앱 ID. 출시 전 AdMob 콘솔의 실제 앱 ID로 교체 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"
+            android:value="ca-app-pub-8387477370861262~8133127457"
         />
 
         <activity
