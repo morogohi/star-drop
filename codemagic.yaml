@@ -14,7 +14,7 @@ workflows:
       vars:
         XCODE_PROJECT: ios/App/App.xcodeproj
         XCODE_SCHEME: App
-        APP_STORE_APPLE_ID: 0000000000    # ★ App Store Connect > 앱 정보 > Apple ID (숫자 10자리)
+        APP_STORE_APPLE_ID: 6833539807    # App Store Connect Apple ID
       node: 22
       xcode: latest                       # 2026-04-28부터 업로드는 Xcode 26 이상 필수
     triggering:
