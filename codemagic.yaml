@@ -30,7 +30,10 @@ workflows:
         script: xcode-project use-profiles
       - name: 서명된 IPA 빌드 (빌드 번호 = App Store Connect 최신 + 1)
         script: |
-          LATEST=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          AS=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          TF=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          LATEST=$(( AS > TF ? AS : TF ))
+          [ "$LATEST" -lt 2 ] && LATEST=2   # 3.0.0 빌드 2가 이미 업로드됨(ITMS-91064로 무효 처리)
           NEXT=$((LATEST + 1))
           echo "Build number: $NEXT"
           xcode-project build-ipa \
