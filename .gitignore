@@ -19,3 +19,4 @@ stardrop-*.apk
 stardrop-*.aab
 ios-upload.env
 key_backup/
+tests/shot-*.png
