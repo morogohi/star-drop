@@ -28,6 +28,11 @@ workflows:
         script: npx cap sync ios
       - name: 서명 프로파일 적용
         script: xcode-project use-profiles
+      - name: SPM 의존성 받기 + 개인정보 매니페스트 정리 (ITMS-91064)
+        script: |
+          SPM_DIR="$PWD/.spm"
+          xcodebuild -resolvePackageDependencies -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -clonedSourcePackagesDirPath "$SPM_DIR"
+          bash tools/fix-privacy-manifests.sh "$SPM_DIR" node_modules ios
       - name: 서명된 IPA 빌드 (빌드 번호 = App Store Connect 최신 + 1)
         script: |
           AS=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
@@ -39,7 +44,10 @@ workflows:
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
+            --archive-flags="-clonedSourcePackagesDirPath $PWD/.spm" \
             --archive-xcargs "CURRENT_PROJECT_VERSION=$NEXT"
+      - name: IPA 개인정보 매니페스트 검증 (업로드 전)
+        script: bash tools/check-ipa-privacy.sh
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
